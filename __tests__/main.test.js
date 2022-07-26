@@ -1,4 +1,5 @@
 const dotenv = require('dotenv');
+const ethers = require('ethers');
 const _ = require('lodash');
 const main = require('../main');
 dotenv.config();
@@ -49,8 +50,11 @@ describe('main', () => {
 	const referencedButNotMerged = 'https://github.com/OpenQDev/OpenQ-TestRepo/issues/139';
 
 	const referencedTier1Winner = 'https://github.com/OpenQDev/OpenQ-TestRepo/issues/449';
+	const ongoing = 'https://github.com/OpenQDev/OpenQ-TestRepo/issues/451';
 
 	const littleBigIdea = 'https://github.com/honey-labs/honey-frontend/issues/151';
+
+	const abiCoder = new ethers.utils.AbiCoder;
 
 	beforeEach(() => {
 		event = {
@@ -94,18 +98,33 @@ describe('main', () => {
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
 
-			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85GjwA1', claimantPullRequestUrl: "https://github.com/OpenQDev/OpenQ-TestRepo/pull/138", txnHash: '0x123abc' });
+			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85GjwA1', claimantPullRequestUrl: 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/138', txnHash: '0x123abc' });
 		});
 
-		it.only('should resolve with issueId and txnHash for properly referenced issue - TIER 1', async () => {
+		it('should resolve with issueId and txnHash for properly referenced issue - TIER 0/FIRST PLACE', async () => {
 			const obj = { request: { body: { issueUrl: referencedTier1Winner } } };
 			event = _.merge(event, obj);
 
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
 			MockOpenQContract.bountyClassReturn = 2;
-			const closerData = '0x00000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000003368747470733a2f2f6769746875622e636f6d2f4f70656e514465762f4f70656e512d546573745265706f2f70756c6c2f34353000000000000000000000000000';
+
+			const closerData = abiCoder.encode(['string', 'uint256'], ['https://github.com/OpenQDev/OpenQ-TestRepo/pull/450', 0]);
+
 			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85Oi4wi', closerData, txnHash: '0x123abc' });
+		});
+
+		it.only('should resolve with issueId and txnHash for properly referenced issue - Ongoing', async () => {
+			const obj = { request: { body: { issueUrl: ongoing } } };
+			event = _.merge(event, obj);
+
+			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
+			MockOpenQContract.isOpen = true;
+			MockOpenQContract.bountyClassReturn = 1;
+
+			const closerData = abiCoder.encode(['string'], ['https://github.com/OpenQDev/OpenQ-TestRepo/pull/452']);
+
+			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85Oi-oQ', closerData, txnHash: '0x123abc' });
 		});
 
 		it('should resolve with issueId and txnHash for properly referenced issue - pull request body, no edits', async () => {
