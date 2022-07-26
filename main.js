@@ -21,19 +21,30 @@ const main = async (
 		}
 
 		try {
-			const { canWithdraw, issueId, claimantPullRequestUrl } = await checkWithdrawalEligibility(issueUrl, oauthToken, event.secrets.PAT);
+			const { canWithdraw, issueId, claimantPullRequestUrl, tier } = await checkWithdrawalEligibility(issueUrl, oauthToken, event.secrets.PAT);
+
 			const issueIsOpen = await contract.bountyIsOpen(issueId);
+			const bountyClass = await contract.bountyClass(issueId);
 
 			if (canWithdraw && issueIsOpen) {
 				const options = { gasLimit: 3000000 };
 
+				let closerData;
 				const abiCoder = new ethers.utils.AbiCoder;
-				const abiEncodedParams = abiCoder.encode(['string', 'uint256'], [claimantPullRequestUrl, depositCount]);
 
-				const txn = await contract.claimBounty(issueId, payoutAddress, abiEncodedParams, options);
+				if (bountyClass == 0 || bountyClass == 1 || bountyClass == 3) {
+					closerData = abiCoder.encode(['string'], [claimantPullRequestUrl]);
+				} else if (bountyClass == 2) {
+					console.log(tier);
+					closerData = abiCoder.encode(['string', 'uint256'], [claimantPullRequestUrl, tier]);
+				} else {
+					throw new Error('Undefined class of bounty');
+				}
+
+				const txn = await contract.claimBounty(issueId, payoutAddress, closerData, options);
 
 				console.log(`Can withdraw. Transaction hash is ${txn.hash}. Claimant PR is ${claimantPullRequestUrl}`);
-				resolve({ txnHash: txn.hash, issueId, claimantPullRequestUrl });
+				resolve({ txnHash: txn.hash, issueId, closerData });
 			} else {
 				console.error(BOUNTY_IS_CLAIMED({ issueUrl, payoutAddress, claimantPullRequestUrl }));
 				reject(BOUNTY_IS_CLAIMED({ issueUrl, payoutAddress, claimantPullRequestUrl }));

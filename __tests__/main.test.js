@@ -9,6 +9,14 @@ INTEGRATION TEST
 This is an integration test which makes live calls to the GitHub GraphQL API.
 
 As such, before testing you must provide a valid GitHub OAuth token signed by COOKIE_SIGNER in .env before running.
+
+To do so, start a Node console and run:
+
+const cookie = require('cookie-signature');
+cookie.sign('<your gho token>', '<your COOKIE_SIGNER>')
+
+for example:
+cookie.sign('gho_vshjeyuyuy34', 'entropy123')
 */
 describe('main', () => {
 	let event;
@@ -40,6 +48,8 @@ describe('main', () => {
 	// NOT MERGED
 	const referencedButNotMerged = 'https://github.com/OpenQDev/OpenQ-TestRepo/issues/139';
 
+	const referencedTier1Winner = 'https://github.com/OpenQDev/OpenQ-TestRepo/issues/449';
+
 	const littleBigIdea = 'https://github.com/honey-labs/honey-frontend/issues/151';
 
 	beforeEach(() => {
@@ -70,6 +80,7 @@ describe('main', () => {
 
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
+			MockOpenQContract.bountyClassReturn = {};
 
 			await expect(main(event, MockOpenQContract)).rejects.toEqual({ canWithdraw: false, issueId: 'I_kwDOGWnnz85GkCSK', type: 'NO_WITHDRAWABLE_PR_FOUND', errorMessage: 'No withdrawable PR found.  In order for a pull request to unlock a claim, it must mention the associated bountied issue, be authored by you and merged by a maintainer. We found the following linked pull requests that do not meet the above criteria: https://github.com/OpenQDev/OpenQ-TestRepo/pull/140' });
 		});
@@ -84,6 +95,17 @@ describe('main', () => {
 			MockOpenQContract.isOpen = true;
 
 			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85GjwA1', claimantPullRequestUrl: "https://github.com/OpenQDev/OpenQ-TestRepo/pull/138", txnHash: '0x123abc' });
+		});
+
+		it.only('should resolve with issueId and txnHash for properly referenced issue - TIER 1', async () => {
+			const obj = { request: { body: { issueUrl: referencedTier1Winner } } };
+			event = _.merge(event, obj);
+
+			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
+			MockOpenQContract.isOpen = true;
+			MockOpenQContract.bountyClassReturn = 2;
+			const closerData = '0x00000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000003368747470733a2f2f6769746875622e636f6d2f4f70656e514465762f4f70656e512d546573745265706f2f70756c6c2f34353000000000000000000000000000';
+			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85Oi4wi', closerData, txnHash: '0x123abc' });
 		});
 
 		it('should resolve with issueId and txnHash for properly referenced issue - pull request body, no edits', async () => {
