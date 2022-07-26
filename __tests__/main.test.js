@@ -97,8 +97,11 @@ describe('main', () => {
 
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
+			MockOpenQContract.bountyClassReturn = 0;
 
-			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85GjwA1', claimantPullRequestUrl: 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/138', txnHash: '0x123abc' });
+			const closerData = abiCoder.encode(['string'], ['https://github.com/OpenQDev/OpenQ-TestRepo/pull/138']);
+
+			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85GjwA1', closerData, txnHash: '0x123abc' });
 		});
 
 		it('should resolve with issueId and txnHash for properly referenced issue - TIER 0/FIRST PLACE', async () => {
@@ -114,7 +117,7 @@ describe('main', () => {
 			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85Oi4wi', closerData, txnHash: '0x123abc' });
 		});
 
-		it.only('should resolve with issueId and txnHash for properly referenced issue - Ongoing', async () => {
+		it('should resolve with issueId and txnHash for properly referenced issue - Ongoing', async () => {
 			const obj = { request: { body: { issueUrl: ongoing } } };
 			event = _.merge(event, obj);
 
@@ -133,8 +136,11 @@ describe('main', () => {
 
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
+			MockOpenQContract.bountyClassReturn = 0;
 
-			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85GjwA1', claimantPullRequestUrl: "https://github.com/OpenQDev/OpenQ-TestRepo/pull/138", txnHash: '0x123abc' });
+			const closerData = abiCoder.encode(['string'], ['https://github.com/OpenQDev/OpenQ-TestRepo/pull/138']);
+
+			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85GjwA1', closerData, txnHash: '0x123abc' });
 		});
 
 		it('should resolve with issueId and txnHash for properly referenced issue - pull request body, pre-merge edits', async () => {
@@ -143,8 +149,11 @@ describe('main', () => {
 
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
+			MockOpenQContract.bountyClassReturn = 0;
 
-			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85IbulA', claimantPullRequestUrl: "https://github.com/OpenQDev/OpenQ-TestRepo/pull/181", txnHash: '0x123abc' });
+			const closerData = abiCoder.encode(['string'], ['https://github.com/OpenQDev/OpenQ-TestRepo/pull/181']);
+
+			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85IbulA', closerData, txnHash: '0x123abc' });
 		});
 
 		it('should reject with  NO_WITHDRAWABLE_PR_FOUND for post-merge body references - pull request body, post-merge edits', async () => {
@@ -175,8 +184,11 @@ describe('main', () => {
 
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
+			MockOpenQContract.bountyClassReturn = 0;
 
-			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85IbwJy', claimantPullRequestUrl: "https://github.com/OpenQDev/OpenQ-TestRepo/pull/187", txnHash: '0x123abc' });
+			const closerData = abiCoder.encode(['string'], ['https://github.com/OpenQDev/OpenQ-TestRepo/pull/187']);
+
+			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85IbwJy', closerData, txnHash: '0x123abc' });
 		});
 
 		it('should resolve with issueId and txnHash for properly referenced issue - pull request comment, pre-merge edits', async () => {
@@ -185,8 +197,11 @@ describe('main', () => {
 
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
+			MockOpenQContract.bountyClassReturn = 0;
 
-			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85Ibw9J', claimantPullRequestUrl: "https://github.com/OpenQDev/OpenQ-TestRepo/pull/189", txnHash: '0x123abc' });
+			const closerData = abiCoder.encode(['string'], ['https://github.com/OpenQDev/OpenQ-TestRepo/pull/189']);
+
+			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85Ibw9J', closerData, txnHash: '0x123abc' });
 		});
 	});
 
@@ -217,8 +232,11 @@ describe('main', () => {
 
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
+			MockOpenQContract.bountyClassReturn = 0;
 
-			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85Ibxky', claimantPullRequestUrl: "https://github.com/OpenQDev/OpenQ-TestRepo/pull/192", txnHash: '0x123abc' });
+			const closerData = abiCoder.encode(['string'], ['https://github.com/OpenQDev/OpenQ-TestRepo/pull/192']);
+
+			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85Ibxky', closerData, txnHash: '0x123abc' });
 		});
 	});
 });

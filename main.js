@@ -35,7 +35,6 @@ const main = async (
 				if (bountyClass == 0 || bountyClass == 1 || bountyClass == 3) {
 					closerData = abiCoder.encode(['string'], [claimantPullRequestUrl]);
 				} else if (bountyClass == 2) {
-					console.log(tier);
 					closerData = abiCoder.encode(['string', 'uint256'], [claimantPullRequestUrl, tier]);
 				} else {
 					throw new Error('Undefined class of bounty');
