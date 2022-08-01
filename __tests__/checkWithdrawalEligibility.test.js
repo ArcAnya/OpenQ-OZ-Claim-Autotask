@@ -98,7 +98,7 @@ describe('checkWithdrawalEligibility', () => {
 					.onPost('https://api.github.com/graphql')
 					.replyOnce(200, viewerData);
 
-				await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat)).resolves.toEqual({ 'canWithdraw': true, type: 'SUCCESS', claimantPullRequestUrl: "https://github.com/OpenQDev/OpenQ-TestRepo/pull/138", issueId: 'I_kwDOGWnnz85GjwA1', errorMessage: null });
+				await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat)).resolves.toEqual({ 'canWithdraw': true, type: 'SUCCESS', claimantPullRequestUrl: 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/138', issueId: 'I_kwDOGWnnz85GjwA1', errorMessage: null });
 			});
 
 			it('should resolve to with canWithdraw: true if eligible pull request is connected in COMMENTS', async () => {
@@ -110,7 +110,7 @@ describe('checkWithdrawalEligibility', () => {
 					.onPost('https://api.github.com/graphql')
 					.replyOnce(200, viewerData);
 
-				await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat)).resolves.toEqual({ 'canWithdraw': true, type: 'SUCCESS', claimantPullRequestUrl: "https://github.com/OpenQDev/OpenQ-TestRepo/pull/138", issueId: 'I_kwDOGWnnz85GjwA1', errorMessage: null });
+				await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat)).resolves.toEqual({ 'canWithdraw': true, type: 'SUCCESS', claimantPullRequestUrl: 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/138', issueId: 'I_kwDOGWnnz85GjwA1', errorMessage: null });
 			});
 		});
 	});

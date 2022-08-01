@@ -2,6 +2,7 @@ const checkWithdrawalEligibilityImpl = require('./lib/checkWithdrawalEligibility
 const validateSignedOauthTokenImpl = require('./lib/validateSignedOauthToken');
 const { BOUNTY_IS_CLAIMED } = require('./errors');
 const ethers = require('ethers');
+const generateClaimantId = '../generateClaimantId';
 
 const main = async (
 	event,
@@ -21,8 +22,9 @@ const main = async (
 		}
 
 		try {
-			const { canWithdraw, issueId, claimantPullRequestUrl, tier } = await checkWithdrawalEligibility(issueUrl, oauthToken, event.secrets.PAT);
+			const { canWithdraw, issueId, claimantAsset, claimant, tier } = await checkWithdrawalEligibility(issueUrl, oauthToken, event.secrets.PAT);
 
+			const bountyAddress = await contract.bountyIdToAddress(issueId);
 			const issueIsOpen = await contract.bountyIsOpen(issueId);
 			const bountyClass = await contract.bountyClass(issueId);
 
@@ -32,21 +34,26 @@ const main = async (
 				let closerData;
 				const abiCoder = new ethers.utils.AbiCoder;
 
-				if (bountyClass == 0 || bountyClass == 1 || bountyClass == 3) {
-					closerData = abiCoder.encode(['string'], [claimantPullRequestUrl]);
+				if (bountyClass == 1) {
+					const claimantId = generateClaimantId(issueId, claimant, claimantAsset);
+					const ongoingClaimed = await contract.ongoingClaimed(claimantId);
+					if (ongoingClaimed) {
+						throw new Error(`Ongoing Bounty has already been claimed by ${claimant} for ${claimantAsset}.`);
+					}
+					closerData = abiCoder.encode(['address', 'string', 'address', 'string'], [bountyAddress, claimant, payoutAddress, claimantAsset]);
 				} else if (bountyClass == 2) {
-					closerData = abiCoder.encode(['string', 'uint256'], [claimantPullRequestUrl, tier]);
+					closerData = abiCoder.encode(['address', 'string', 'address', 'string', 'uint256'], [bountyAddress, claimant, payoutAddress, claimantAsset, tier]);
 				} else {
 					throw new Error('Undefined class of bounty');
 				}
 
 				const txn = await contract.claimBounty(issueId, payoutAddress, closerData, options);
 
-				console.log(`Can withdraw. Transaction hash is ${txn.hash}. Claimant PR is ${claimantPullRequestUrl}`);
+				console.log(`Can withdraw. Transaction hash is ${txn.hash}. Claimant PR is ${claimantAsset}`);
 				resolve({ txnHash: txn.hash, issueId, closerData });
 			} else {
-				console.error(BOUNTY_IS_CLAIMED({ issueUrl, payoutAddress, claimantPullRequestUrl }));
-				reject(BOUNTY_IS_CLAIMED({ issueUrl, payoutAddress, claimantPullRequestUrl }));
+				console.error(BOUNTY_IS_CLAIMED({ issueUrl, payoutAddress, claimantAsset }));
+				reject(BOUNTY_IS_CLAIMED({ issueUrl, payoutAddress, claimantAsset }));
 			}
 		} catch (error) {
 			console.error(error);
