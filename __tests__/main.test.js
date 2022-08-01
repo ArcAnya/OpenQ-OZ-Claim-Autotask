@@ -117,7 +117,7 @@ describe('main', () => {
 			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85Oi4wi', closerData, txnHash: '0x123abc' });
 		});
 
-		it.only('should resolve with issueId and txnHash for properly referenced issue - Ongoing', async () => {
+		it('should resolve with issueId and txnHash for properly referenced issue - Ongoing', async () => {
 			const obj = { request: { body: { issueUrl: ongoing } } };
 			event = _.merge(event, obj);
 
@@ -131,6 +131,20 @@ describe('main', () => {
 			const closerData = abiCoder.encode(['address', 'string', 'address', 'string'], ['0x46e09468616365256F11F4544e65cE0C70ee624b', 'FlacoJones', payoutAddress, 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/452']);
 
 			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85Oi-oQ', closerData, txnHash: '0x123abc' });
+		});
+
+		it.only('should fail if claimant id is claimed - Ongoing', async () => {
+			const obj = { request: { body: { issueUrl: ongoing } } };
+			event = _.merge(event, obj);
+
+			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
+			MockOpenQContract.isOpen = true;
+			MockOpenQContract.bountyClassReturn = 1;
+			MockOpenQContract.ongoingClaimedReturn = true;
+			const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
+			MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
+
+			await expect(main(event, MockOpenQContract)).rejects.toEqual({ canWithdraw: false, errorMessage: 'Ongoing Bounty for https://github.com/OpenQDev/OpenQ-TestRepo/issues/451 has already been claimed by FlacoJones for https://github.com/OpenQDev/OpenQ-TestRepo/pull/452.', id: '0x1abc0D6fb0d5A374027ce98Bf15716A3Ee31e580', type: 'BOUNTY_IS_CLAIMED' });
 		});
 
 		it('should resolve with issueId and txnHash for properly referenced issue - pull request body, no edits', async () => {

@@ -1,6 +1,6 @@
 const checkWithdrawalEligibilityImpl = require('./lib/checkWithdrawalEligibility');
 const validateSignedOauthTokenImpl = require('./lib/validateSignedOauthToken');
-const { BOUNTY_IS_CLAIMED } = require('./errors');
+const { BOUNTY_IS_CLAIMED, ONGOING_ALREADY_CLAIM } = require('./errors');
 const ethers = require('ethers');
 const generateClaimantId = require('./lib/generateClaimantId');
 
@@ -38,7 +38,7 @@ const main = async (
 					const claimantId = generateClaimantId(claimant, claimantAsset);
 					const ongoingClaimed = await contract.ongoingClaimed(claimantId);
 					if (ongoingClaimed) {
-						throw new Error(`Ongoing Bounty has already been claimed by ${claimant} for ${claimantAsset}.`);
+						reject(ONGOING_ALREADY_CLAIM({ issueUrl, payoutAddress, claimant, claimantAsset }));
 					}
 					closerData = abiCoder.encode(['address', 'string', 'address', 'string'], [bountyAddress, claimant, payoutAddress, claimantAsset]);
 				} else if (bountyClass == 2) {

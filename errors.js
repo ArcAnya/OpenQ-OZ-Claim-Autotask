@@ -38,6 +38,10 @@ const BOUNTY_IS_CLAIMED = ({ issueUrl, payoutAddress }) => {
 	return { canWithdraw: false, id: payoutAddress, type: 'BOUNTY_IS_CLAIMED', errorMessage: `Bounty for ${issueUrl} is already claimed` };
 };
 
+const ONGOING_ALREADY_CLAIM = ({ issueUrl, payoutAddress, claimant, claimantAsset }) => {
+	return { canWithdraw: false, id: payoutAddress, type: 'BOUNTY_IS_CLAIMED', errorMessage: `Ongoing Bounty for ${issueUrl} has already been claimed by ${claimant} for ${claimantAsset}.` };
+};
+
 const UNKNOWN_ERROR = ({ issueUrl, error }) => {
 	return { issueUrl, canWithdraw: false, type: 'UNKNOWN_ERROR', errorMessage: JSON.stringify(error) };
 };
@@ -71,5 +75,6 @@ module.exports = {
 	PR_NOT_MERGED_INTO_ORGANIZATION_REPOSITORY,
 	BOUNTY_IS_CLAIMED,
 	NO_WITHDRAWABLE_PR_FOUND,
-	UNKNOWN_ERROR
+	UNKNOWN_ERROR,
+	ONGOING_ALREADY_CLAIM
 };

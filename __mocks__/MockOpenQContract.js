@@ -39,7 +39,7 @@ const MockOpenQContract = {
 	},
 	ongoingClaimed: async (issueId) => {
 		return new Promise(async (resolve, reject) => {
-			resolve(false);
+			resolve(ongoingClaimedReturn);
 		});
 	},
 	bountyIdToAddress: async (issueId) => {
