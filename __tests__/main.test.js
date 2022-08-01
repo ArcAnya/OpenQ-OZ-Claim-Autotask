@@ -117,15 +117,18 @@ describe('main', () => {
 			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85Oi4wi', closerData, txnHash: '0x123abc' });
 		});
 
-		it('should resolve with issueId and txnHash for properly referenced issue - Ongoing', async () => {
+		it.only('should resolve with issueId and txnHash for properly referenced issue - Ongoing', async () => {
 			const obj = { request: { body: { issueUrl: ongoing } } };
 			event = _.merge(event, obj);
 
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
 			MockOpenQContract.bountyClassReturn = 1;
+			MockOpenQContract.ongoingClaimedReturn = false;
+			const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
+			MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
 
-			const closerData = abiCoder.encode(['string'], ['https://github.com/OpenQDev/OpenQ-TestRepo/pull/452']);
+			const closerData = abiCoder.encode(['address', 'string', 'address', 'string'], ['0x46e09468616365256F11F4544e65cE0C70ee624b', 'FlacoJones', payoutAddress, 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/452']);
 
 			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85Oi-oQ', closerData, txnHash: '0x123abc' });
 		});

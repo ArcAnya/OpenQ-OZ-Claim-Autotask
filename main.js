@@ -2,7 +2,7 @@ const checkWithdrawalEligibilityImpl = require('./lib/checkWithdrawalEligibility
 const validateSignedOauthTokenImpl = require('./lib/validateSignedOauthToken');
 const { BOUNTY_IS_CLAIMED } = require('./errors');
 const ethers = require('ethers');
-const generateClaimantId = '../generateClaimantId';
+const generateClaimantId = require('./lib/generateClaimantId');
 
 const main = async (
 	event,
@@ -35,7 +35,7 @@ const main = async (
 				const abiCoder = new ethers.utils.AbiCoder;
 
 				if (bountyClass == 1) {
-					const claimantId = generateClaimantId(issueId, claimant, claimantAsset);
+					const claimantId = generateClaimantId(claimant, claimantAsset);
 					const ongoingClaimed = await contract.ongoingClaimed(claimantId);
 					if (ongoingClaimed) {
 						throw new Error(`Ongoing Bounty has already been claimed by ${claimant} for ${claimantAsset}.`);
