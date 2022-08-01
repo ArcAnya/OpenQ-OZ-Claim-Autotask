@@ -1,6 +1,6 @@
 const checkWithdrawalEligibilityImpl = require('./lib/checkWithdrawalEligibility');
 const validateSignedOauthTokenImpl = require('./lib/validateSignedOauthToken');
-const { BOUNTY_IS_CLAIMED, ONGOING_ALREADY_CLAIM } = require('./errors');
+const { BOUNTY_IS_CLAIMED, ONGOING_ALREADY_CLAIMED, TIER_ALREADY_CLAIMED } = require('./errors');
 const ethers = require('ethers');
 const generateClaimantId = require('./lib/generateClaimantId');
 
@@ -34,14 +34,21 @@ const main = async (
 				let closerData;
 				const abiCoder = new ethers.utils.AbiCoder;
 
-				if (bountyClass == 1) {
+				if (bountyClass == 0 || bountyClass == 3) {
+					closerData = abiCoder.encode(['address', 'string', 'address', 'string'], [bountyAddress, claimant, payoutAddress, claimantAsset]);
+				} else if (bountyClass == 1) {
 					const claimantId = generateClaimantId(claimant, claimantAsset);
 					const ongoingClaimed = await contract.ongoingClaimed(claimantId);
 					if (ongoingClaimed) {
-						reject(ONGOING_ALREADY_CLAIM({ issueUrl, payoutAddress, claimant, claimantAsset }));
+						return reject(ONGOING_ALREADY_CLAIMED({ issueUrl, payoutAddress, claimant, claimantAsset }));
 					}
 					closerData = abiCoder.encode(['address', 'string', 'address', 'string'], [bountyAddress, claimant, payoutAddress, claimantAsset]);
 				} else if (bountyClass == 2) {
+					const tierClaimed = await contract.tierClaimed(issueId, tier);
+					if (tierClaimed) {
+						return reject(TIER_ALREADY_CLAIMED({ issueUrl, payoutAddress, claimant, claimantAsset, tier }));
+					}
+					console.log('in tier');
 					closerData = abiCoder.encode(['address', 'string', 'address', 'string', 'uint256'], [bountyAddress, claimant, payoutAddress, claimantAsset, tier]);
 				} else {
 					throw new Error('Undefined class of bounty');

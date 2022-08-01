@@ -98,10 +98,28 @@ describe('main', () => {
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
 			MockOpenQContract.bountyClassReturn = 0;
+			const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
+			MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
 
-			const closerData = abiCoder.encode(['string'], ['https://github.com/OpenQDev/OpenQ-TestRepo/pull/138']);
+			const closerData = abiCoder.encode(['address', 'string', 'address', 'string'], ['0x46e09468616365256F11F4544e65cE0C70ee624b', 'FlacoJones', payoutAddress, 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/452']);
 
 			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85GjwA1', closerData, txnHash: '0x123abc' });
+		});
+
+		it.only('should reject if tier is already claimed - TIER 0/FIRST PLACE', async () => {
+			const obj = { request: { body: { issueUrl: referencedTier1Winner } } };
+			event = _.merge(event, obj);
+
+			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
+			MockOpenQContract.isOpen = true;
+			MockOpenQContract.bountyClassReturn = 2;
+			MockOpenQContract.tierClaimedReturn = true;
+			const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
+			MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
+
+			const closerData = abiCoder.encode(['address', 'string', 'address', 'string', 'uint256'], [bountyAddress, 'FlacoJones', payoutAddress, 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/450', 0]);
+
+			await expect(main(event, MockOpenQContract)).rejects.toEqual({ type: 'BOUNTY_IS_CLAIMED', id: '0x1abc0D6fb0d5A374027ce98Bf15716A3Ee31e580', errorMessage: 'Tiered Bounty for https://github.com/OpenQDev/OpenQ-TestRepo/issues/449 at tier 0 has already been claimed by FlacoJones for https://github.com/OpenQDev/OpenQ-TestRepo/pull/450.', canWithdraw: false });
 		});
 
 		it('should resolve with issueId and txnHash for properly referenced issue - TIER 0/FIRST PLACE', async () => {
@@ -111,8 +129,11 @@ describe('main', () => {
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
 			MockOpenQContract.bountyClassReturn = 2;
+			MockOpenQContract.tierClaimedReturn = false;
+			const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
+			MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
 
-			const closerData = abiCoder.encode(['string', 'uint256'], ['https://github.com/OpenQDev/OpenQ-TestRepo/pull/450', 0]);
+			const closerData = abiCoder.encode(['address', 'string', 'address', 'string', 'uint256'], [bountyAddress, 'FlacoJones', payoutAddress, 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/450', 0]);
 
 			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85Oi4wi', closerData, txnHash: '0x123abc' });
 		});
@@ -133,7 +154,7 @@ describe('main', () => {
 			await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85Oi-oQ', closerData, txnHash: '0x123abc' });
 		});
 
-		it.only('should fail if claimant id is claimed - Ongoing', async () => {
+		it('should fail if claimant id is claimed - Ongoing', async () => {
 			const obj = { request: { body: { issueUrl: ongoing } } };
 			event = _.merge(event, obj);
 

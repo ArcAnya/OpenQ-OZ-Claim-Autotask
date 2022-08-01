@@ -89,7 +89,7 @@ describe('checkWithdrawalEligibility', () => {
 		});
 
 		describe('Eligible Response', () => {
-			it.only('should resolve to with canWithdraw: true if eligible pull request is connected in BODY', async () => {
+			it('should resolve to with canWithdraw: true if eligible pull request is connected in BODY', async () => {
 				const issuePrData = { data: { viewer: { login: 'FlacoJones' }, resource: { id: 'I_kwDOGWnnz85GjwA1', number: 136, repository: { owner: { login: 'OpenQDev' } }, timelineItems: { edges: [{ node: { createdAt: '2022-03-28T17:47:26Z', source: { __typename: 'PullRequest', bodyText: 'This Closes #136 and also unrelated thing of Fixes #137', mergedAt: '2022-03-28T17:57:44Z', createdAt: '2022-03-28T17:47:26Z', userContentEdits: { edges: [] }, comments: { edges: [] }, merged: true, url: 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/138', author: { login: 'FlacoJones' }, baseRepository: { name: 'OpenQ-TestRepo', owner: { login: 'OpenQDev' } } } } }] } } } };
 
 				mock
@@ -98,7 +98,7 @@ describe('checkWithdrawalEligibility', () => {
 					.onPost('https://api.github.com/graphql')
 					.replyOnce(200, viewerData);
 
-				await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat)).resolves.toEqual({ 'canWithdraw': true, type: 'SUCCESS', claimantPullRequestUrl: 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/138', issueId: 'I_kwDOGWnnz85GjwA1', errorMessage: null });
+				await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat)).resolves.toEqual({ 'canWithdraw': true, type: 'SUCCESS', claimantAsset: 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/138', claimant: 'FlacoJones', issueId: 'I_kwDOGWnnz85GjwA1', errorMessage: null, tier: null });
 			});
 
 			it('should resolve to with canWithdraw: true if eligible pull request is connected in COMMENTS', async () => {
@@ -110,7 +110,7 @@ describe('checkWithdrawalEligibility', () => {
 					.onPost('https://api.github.com/graphql')
 					.replyOnce(200, viewerData);
 
-				await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat)).resolves.toEqual({ 'canWithdraw': true, type: 'SUCCESS', claimantPullRequestUrl: 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/138', issueId: 'I_kwDOGWnnz85GjwA1', errorMessage: null });
+				await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat)).resolves.toEqual({ 'canWithdraw': true, type: 'SUCCESS', claimantAsset: 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/138', claimant: 'FlacoJones', issueId: 'I_kwDOGWnnz85GjwA1', errorMessage: null, tier: null });
 			});
 		});
 	});

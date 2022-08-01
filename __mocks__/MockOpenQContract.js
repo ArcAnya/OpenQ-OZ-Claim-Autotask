@@ -13,6 +13,13 @@ const MockOpenQContract = {
 	set ongoingClaimedReturn(bool) {
 		ongoingClaimedReturn = bool;
 	},
+	tierClaimedReturn: false,
+	get tierClaimedReturn() {
+		return tierClaimedReturn;
+	},
+	set tierClaimedReturn(bool) {
+		tierClaimedReturn = bool;
+	},
 	bountyClassReturn: 0,
 	get bountyClassReturn() {
 		return bountyClassReturn;
@@ -40,6 +47,11 @@ const MockOpenQContract = {
 	ongoingClaimed: async (issueId) => {
 		return new Promise(async (resolve, reject) => {
 			resolve(ongoingClaimedReturn);
+		});
+	},
+	tierClaimed: async (issueId, tier) => {
+		return new Promise(async (resolve, reject) => {
+			resolve(tierClaimedReturn);
 		});
 	},
 	bountyIdToAddress: async (issueId) => {
