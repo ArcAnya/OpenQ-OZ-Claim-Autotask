@@ -25,8 +25,13 @@ const main = async (
 			const { canWithdraw, issueId, claimantAsset, claimant, tier } = await checkWithdrawalEligibility(issueUrl, oauthToken, event.secrets.PAT);
 
 			const bountyAddress = await contract.bountyIdToAddress(issueId);
+			console.log('bountyAddress', bountyAddress);
+
 			const issueIsOpen = await contract.bountyIsOpen(issueId);
-			const bountyClass = await contract.bountyClass(issueId);
+			console.log('issueIsOpen', issueIsOpen);
+
+			const bountyType = await contract.bountyType(issueId);
+			console.log('bountyType', bountyType);
 
 			if (canWithdraw && issueIsOpen) {
 				const options = { gasLimit: 3000000 };
@@ -34,21 +39,21 @@ const main = async (
 				let closerData;
 				const abiCoder = new ethers.utils.AbiCoder;
 
-				if (bountyClass == 0 || bountyClass == 3) {
+				if (bountyType == 0 || bountyType == 3) {
 					closerData = abiCoder.encode(['address', 'string', 'address', 'string'], [bountyAddress, claimant, payoutAddress, claimantAsset]);
-				} else if (bountyClass == 1) {
+				} else if (bountyType == 1) {
 					const claimantId = generateClaimantId(claimant, claimantAsset);
-					const ongoingClaimed = await contract.ongoingClaimed(claimantId);
+					console.log('claimantId', claimantId);
+					const ongoingClaimed = await contract.ongoingClaimed(issueId, claimant, claimantAsset);
 					if (ongoingClaimed) {
 						return reject(ONGOING_ALREADY_CLAIMED({ issueUrl, payoutAddress, claimant, claimantAsset }));
 					}
 					closerData = abiCoder.encode(['address', 'string', 'address', 'string'], [bountyAddress, claimant, payoutAddress, claimantAsset]);
-				} else if (bountyClass == 2) {
+				} else if (bountyType == 2) {
 					const tierClaimed = await contract.tierClaimed(issueId, tier);
 					if (tierClaimed) {
 						return reject(TIER_ALREADY_CLAIMED({ issueUrl, payoutAddress, claimant, claimantAsset, tier }));
 					}
-					console.log('in tier');
 					closerData = abiCoder.encode(['address', 'string', 'address', 'string', 'uint256'], [bountyAddress, claimant, payoutAddress, claimantAsset, tier]);
 				} else {
 					throw new Error('Undefined class of bounty');

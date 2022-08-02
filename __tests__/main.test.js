@@ -84,7 +84,7 @@ describe('main', () => {
 
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
-			MockOpenQContract.bountyClassReturn = {};
+			MockOpenQContract.bountyTypeReturn = {};
 
 			await expect(main(event, MockOpenQContract)).rejects.toEqual({ canWithdraw: false, issueId: 'I_kwDOGWnnz85GkCSK', type: 'NO_WITHDRAWABLE_PR_FOUND', errorMessage: 'No withdrawable PR found.  In order for a pull request to unlock a claim, it must mention the associated bountied issue, be authored by you and merged by a maintainer. We found the following linked pull requests that do not meet the above criteria: https://github.com/OpenQDev/OpenQ-TestRepo/pull/140' });
 		});
@@ -97,7 +97,7 @@ describe('main', () => {
 
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
-			MockOpenQContract.bountyClassReturn = 0;
+			MockOpenQContract.bountyTypeReturn = 0;
 			const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
 			MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
 
@@ -112,7 +112,7 @@ describe('main', () => {
 
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
-			MockOpenQContract.bountyClassReturn = 2;
+			MockOpenQContract.bountyTypeReturn = 2;
 			MockOpenQContract.tierClaimedReturn = true;
 			const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
 			MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
@@ -126,7 +126,7 @@ describe('main', () => {
 
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
-			MockOpenQContract.bountyClassReturn = 2;
+			MockOpenQContract.bountyTypeReturn = 2;
 			MockOpenQContract.tierClaimedReturn = false;
 			const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
 			MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
@@ -142,7 +142,7 @@ describe('main', () => {
 
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
-			MockOpenQContract.bountyClassReturn = 1;
+			MockOpenQContract.bountyTypeReturn = 1;
 			MockOpenQContract.ongoingClaimedReturn = false;
 			const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
 			MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
@@ -158,7 +158,7 @@ describe('main', () => {
 
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
-			MockOpenQContract.bountyClassReturn = 1;
+			MockOpenQContract.bountyTypeReturn = 1;
 			MockOpenQContract.ongoingClaimedReturn = true;
 			const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
 			MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
@@ -166,13 +166,13 @@ describe('main', () => {
 			await expect(main(event, MockOpenQContract)).rejects.toEqual({ canWithdraw: false, errorMessage: 'Ongoing Bounty for https://github.com/OpenQDev/OpenQ-TestRepo/issues/451 has already been claimed by FlacoJones for https://github.com/OpenQDev/OpenQ-TestRepo/pull/452.', id: '0x1abc0D6fb0d5A374027ce98Bf15716A3Ee31e580', type: 'BOUNTY_IS_CLAIMED' });
 		});
 
-		it.only('should resolve with issueId and txnHash for properly referenced issue - pull request body, no edits', async () => {
+		it('should resolve with issueId and txnHash for properly referenced issue - pull request body, no edits', async () => {
 			const obj = { request: { body: { issueUrl: littleBigIdea } } };
 			event = _.merge(event, obj);
 
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
-			MockOpenQContract.bountyClassReturn = 0;
+			MockOpenQContract.bountyTypeReturn = 0;
 			const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
 			MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
 
@@ -187,7 +187,7 @@ describe('main', () => {
 
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
-			MockOpenQContract.bountyClassReturn = 0;
+			MockOpenQContract.bountyTypeReturn = 0;
 
 			const closerData = abiCoder.encode(['address', 'string', 'address', 'string'], ['0x46e09468616365256F11F4544e65cE0C70ee624b', 'FlacoJones', payoutAddress, 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/181']);
 
@@ -222,7 +222,7 @@ describe('main', () => {
 
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
-			MockOpenQContract.bountyClassReturn = 0;
+			MockOpenQContract.bountyTypeReturn = 0;
 
 			const closerData = abiCoder.encode(['address', 'string', 'address', 'string'], ['0x46e09468616365256F11F4544e65cE0C70ee624b', 'FlacoJones', payoutAddress, 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/187']);
 
@@ -235,7 +235,7 @@ describe('main', () => {
 
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
-			MockOpenQContract.bountyClassReturn = 0;
+			MockOpenQContract.bountyTypeReturn = 0;
 
 			const closerData = abiCoder.encode(['address', 'string', 'address', 'string'], ['0x46e09468616365256F11F4544e65cE0C70ee624b', 'FlacoJones', payoutAddress, 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/189']);
 
@@ -270,7 +270,7 @@ describe('main', () => {
 
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 			MockOpenQContract.isOpen = true;
-			MockOpenQContract.bountyClassReturn = 0;
+			MockOpenQContract.bountyTypeReturn = 0;
 			const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
 			MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
 

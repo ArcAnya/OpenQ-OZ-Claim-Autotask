@@ -20,12 +20,12 @@ const MockOpenQContract = {
 	set tierClaimedReturn(bool) {
 		tierClaimedReturn = bool;
 	},
-	bountyClassReturn: 0,
-	get bountyClassReturn() {
-		return bountyClassReturn;
+	bountyTypeReturn: 0,
+	get bountyTypeReturn() {
+		return bountyTypeReturn;
 	},
-	set bountyClassReturn(foo) {
-		bountyClassReturn = foo;
+	set bountyTypeReturn(foo) {
+		bountyTypeReturn = foo;
 	},
 	bountyIdToAddressReturn: '0x46e09468616365256F11F4544e65cE0C70ee624b',
 	get bountyIdToAddressReturn() {
@@ -39,9 +39,9 @@ const MockOpenQContract = {
 			resolve(isOpen);
 		});
 	},
-	bountyClass: async (issueId) => {
+	bountyType: async (issueId) => {
 		return new Promise(async (resolve, reject) => {
-			resolve(bountyClassReturn);
+			resolve(bountyTypeReturn);
 		});
 	},
 	ongoingClaimed: async (issueId) => {
