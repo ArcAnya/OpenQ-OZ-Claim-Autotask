@@ -25,13 +25,8 @@ const main = async (
 			const { canWithdraw, issueId, claimantAsset, claimant, tier } = await checkWithdrawalEligibility(issueUrl, oauthToken, event.secrets.PAT);
 
 			const bountyAddress = await contract.bountyIdToAddress(issueId);
-			console.log('bountyAddress', bountyAddress);
-
 			const issueIsOpen = await contract.bountyIsOpen(issueId);
-			console.log('issueIsOpen', issueIsOpen);
-
 			const bountyType = await contract.bountyType(issueId);
-			console.log('bountyType', bountyType);
 
 			if (canWithdraw && issueIsOpen) {
 				const options = { gasLimit: 3000000 };
