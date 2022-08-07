@@ -25,8 +25,15 @@ const main = async (
 			const { canWithdraw, issueId, claimantAsset, claimant, tier } = await checkWithdrawalEligibility(issueUrl, oauthToken, event.secrets.PAT);
 
 			const bountyAddress = await contract.bountyIdToAddress(issueId);
-			const issueIsOpen = await contract.bountyIsOpen(issueId);
 			const bountyType = await contract.bountyType(issueId);
+			let issueIsOpen = await contract.bountyIsOpen(issueId);
+
+			// For competition it is flipped - can only claim 
+			if (bountyType == 2) {
+				issueIsOpen = !issueIsOpen;
+			}
+
+			console.log('issueIsOpen', issueIsOpen);
 
 			if (canWithdraw && issueIsOpen) {
 				const options = { gasLimit: 3000000 };
@@ -46,6 +53,7 @@ const main = async (
 					closerData = abiCoder.encode(['address', 'string', 'address', 'string'], [bountyAddress, claimant, payoutAddress, claimantAsset]);
 				} else if (bountyType == 2) {
 					const tierClaimed = await contract.tierClaimed(issueId, tier);
+					console.log('tierClaimed', tierClaimed);
 					if (tierClaimed) {
 						return reject(TIER_ALREADY_CLAIMED({ issueUrl, payoutAddress, claimant, claimantAsset, tier }));
 					}
