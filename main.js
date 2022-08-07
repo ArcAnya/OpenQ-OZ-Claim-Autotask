@@ -1,8 +1,7 @@
 const checkWithdrawalEligibilityImpl = require('./lib/checkWithdrawalEligibility');
 const validateSignedOauthTokenImpl = require('./lib/validateSignedOauthToken');
-const { BOUNTY_IS_CLAIMED, ONGOING_ALREADY_CLAIMED, TIER_ALREADY_CLAIMED } = require('./errors');
+const { BOUNTY_IS_CLAIMED } = require('./errors');
 const ethers = require('ethers');
-const generateClaimantId = require('./lib/generateClaimantId');
 
 const main = async (
 	event,
@@ -22,18 +21,16 @@ const main = async (
 		}
 
 		try {
-			const { canWithdraw, issueId, claimantAsset, claimant, tier } = await checkWithdrawalEligibility(issueUrl, oauthToken, event.secrets.PAT);
+			const { canWithdraw, issueId, claimantAsset, claimant, tier } = await checkWithdrawalEligibility(issueUrl, oauthToken, event.secrets.PAT, contract);
 
-			const bountyAddress = await contract.bountyIdToAddress(issueId);
 			const bountyType = await contract.bountyType(issueId);
+			const bountyAddress = await contract.bountyIdToAddress(issueId);
 			let issueIsOpen = await contract.bountyIsOpen(issueId);
 
 			// For competition it is flipped - can only claim 
 			if (bountyType == 2) {
 				issueIsOpen = !issueIsOpen;
 			}
-
-			console.log('issueIsOpen', issueIsOpen);
 
 			if (canWithdraw && issueIsOpen) {
 				const options = { gasLimit: 3000000 };
@@ -44,19 +41,8 @@ const main = async (
 				if (bountyType == 0 || bountyType == 3) {
 					closerData = abiCoder.encode(['address', 'string', 'address', 'string'], [bountyAddress, claimant, payoutAddress, claimantAsset]);
 				} else if (bountyType == 1) {
-					const claimantId = generateClaimantId(claimant, claimantAsset);
-					console.log('claimantId', claimantId);
-					const ongoingClaimed = await contract.ongoingClaimed(issueId, claimant, claimantAsset);
-					if (ongoingClaimed) {
-						return reject(ONGOING_ALREADY_CLAIMED({ issueUrl, payoutAddress, claimant, claimantAsset }));
-					}
 					closerData = abiCoder.encode(['address', 'string', 'address', 'string'], [bountyAddress, claimant, payoutAddress, claimantAsset]);
 				} else if (bountyType == 2) {
-					const tierClaimed = await contract.tierClaimed(issueId, tier);
-					console.log('tierClaimed', tierClaimed);
-					if (tierClaimed) {
-						return reject(TIER_ALREADY_CLAIMED({ issueUrl, payoutAddress, claimant, claimantAsset, tier }));
-					}
 					closerData = abiCoder.encode(['address', 'string', 'address', 'string', 'uint256'], [bountyAddress, claimant, payoutAddress, claimantAsset, tier]);
 				} else {
 					throw new Error('Undefined class of bounty');

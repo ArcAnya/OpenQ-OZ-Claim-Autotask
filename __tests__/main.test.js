@@ -183,7 +183,7 @@ describe('main', () => {
 					const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
 					MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
 
-					await expect(main(event, MockOpenQContract)).rejects.toEqual({ type: 'BOUNTY_IS_CLAIMED', id: '0x1abc0D6fb0d5A374027ce98Bf15716A3Ee31e580', errorMessage: 'Tiered Bounty for https://github.com/OpenQDev/OpenQ-TestRepo/issues/449 at tier 1 has already been claimed by FlacoJones for https://github.com/OpenQDev/OpenQ-TestRepo/pull/450.', canWithdraw: false });
+					await expect(main(event, MockOpenQContract)).rejects.toEqual({ type: 'NO_WITHDRAWABLE_PR_FOUND', issueId: 'I_kwDOGWnnz85Oi4wi', errorMessage: 'No withdrawable PR found.  In order for a pull request to unlock a claim, it must mention the associated bountied issue, be authored by you and merged by a maintainer. We found the following linked pull requests that do not meet the above criteria: https://github.com/OpenQDev/OpenQ-TestRepo/pull/450', canWithdraw: false });
 				});
 			});
 		});
@@ -211,7 +211,8 @@ describe('main', () => {
 				event = _.merge(event, obj);
 
 				const MockOpenQContract = require('../__mocks__/MockOpenQContract');
-				MockOpenQContract.isOpen = true;
+				// for competition, should be closed in order to claim
+				MockOpenQContract.isOpen = false;
 				MockOpenQContract.bountyTypeReturn = 2;
 				MockOpenQContract.tierClaimedReturn = false;
 				const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
@@ -238,7 +239,7 @@ describe('main', () => {
 				await expect(main(event, MockOpenQContract)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85Oi-oQ', closerData, txnHash: '0x123abc' });
 			});
 
-			it('should resolve with issueId and txnHash for properly referenced issue - pull request body, no edits', async () => {
+			it('should resolve with issueId and txnHash for properly referenced issue - pull request body, no edits, with new line', async () => {
 				const obj = { request: { body: { issueUrl: littleBigIdea } } };
 				event = _.merge(event, obj);
 
@@ -296,7 +297,7 @@ describe('main', () => {
 		});
 
 		describe('MULTIPLE or NO or NON-CLOSER REFERENCES', () => {
-			it('should resolve with issueId and txnHash for properly referenced issue - multiple pull request references, second one valid', async () => {
+			it.only('should resolve with issueId and txnHash for properly referenced issue - multiple pull request references, second one valid', async () => {
 				const obj = { request: { body: { issueUrl: multiplePullRequestReferences } } };
 				event = _.merge(event, obj);
 

@@ -44,14 +44,22 @@ const MockOpenQContract = {
 			resolve(bountyTypeReturn);
 		});
 	},
-	ongoingClaimed: async (issueId) => {
+	ongoingClaimed: async (issueId, claimant, claimantAsset) => {
 		return new Promise(async (resolve, reject) => {
-			resolve(ongoingClaimedReturn);
+			if (claimant == 'FlacoJones' && claimantAsset == 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/138') {
+				return resolve(true);
+			} else {
+				return resolve(false);
+			}
 		});
 	},
 	tierClaimed: async (issueId, tier) => {
 		return new Promise(async (resolve, reject) => {
-			resolve(tierClaimedReturn);
+			if (tier == 0 && issueId == 'I_kwDOGWnnz85GjwA1') {
+				return resolve(true);
+			} else {
+				return resolve(tierClaimedReturn);
+			}
 		});
 	},
 	bountyIdToAddress: async (issueId) => {
