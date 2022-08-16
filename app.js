@@ -2,6 +2,7 @@ const express = require('express');
 const ethers = require('ethers');
 const main = require('./main');
 const OPENQ_ABI = require('./OpenQABI.json');
+const CLAIM_MANAGER_ABI = require('./ClaimManagerABI.json');
 require('dotenv').config();
 
 const { API_KEY: apiKey, API_SECRET: apiSecret } = process.env;
@@ -12,8 +13,10 @@ app.post('/', async (req, res) => {
 	// Construct local signer
 	const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
 	const contract = new ethers.Contract(process.env.OPENQ_PROXY_ADDRESS, OPENQ_ABI, provider);
+	const claimManager = new ethers.Contract(process.env.OPENQ_PROXY_ADDRESS, CLAIM_MANAGER_ABI, provider);
 	const wallet = new ethers.Wallet(process.env.ORACLE_PRIVATE_KEY, provider);
 	const contractWithWallet = contract.connect(wallet);
+	const claimManagerWithWallet = claimManager.connect(wallet);
 
 	// Prepare data for event
 	const { issueUrl, payoutAddress } = req.body;
@@ -33,6 +36,7 @@ app.post('/', async (req, res) => {
 		secrets: {
 			COOKIE_SIGNER: process.env.COOKIE_SIGNER,
 			OPENQ_PROXY_ADDRESS: process.env.OPENQ_PROXY_ADDRESS,
+			CLAIM_MANAGER_PROXY_ADDRESS: process.env.CLAIM_MANAGER_PROXY_ADDRESS,
 			PAT: process.env.PAT
 		},
 		apiKey,
@@ -40,7 +44,7 @@ app.post('/', async (req, res) => {
 	};
 
 	try {
-		const result = await main(event, contractWithWallet);
+		const result = await main(event, contractWithWallet, claimManagerWithWallet);
 
 		// On local we mimic the return JSON from OpenZeppelin Autotask
 		// The result in production is stringidied, so we do that here

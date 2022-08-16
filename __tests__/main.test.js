@@ -297,7 +297,7 @@ describe('main', () => {
 		});
 
 		describe('MULTIPLE or NO or NON-CLOSER REFERENCES', () => {
-			it.only('should resolve with issueId and txnHash for properly referenced issue - multiple pull request references, second one valid', async () => {
+			it('should resolve with issueId and txnHash for properly referenced issue - multiple pull request references, second one valid', async () => {
 				const obj = { request: { body: { issueUrl: multiplePullRequestReferences } } };
 				event = _.merge(event, obj);
 

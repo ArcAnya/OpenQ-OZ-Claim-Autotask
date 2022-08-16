@@ -6,6 +6,7 @@ const ethers = require('ethers');
 const main = async (
 	event,
 	contract,
+	claimManager,
 	checkWithdrawalEligibility = checkWithdrawalEligibilityImpl,
 	validateSignedOauthToken = validateSignedOauthTokenImpl
 ) => {
@@ -48,7 +49,7 @@ const main = async (
 					throw new Error('Undefined class of bounty');
 				}
 
-				const txn = await contract.claimBounty(issueId, payoutAddress, closerData, options);
+				const txn = await claimManager.claimBounty(issueId, payoutAddress, closerData, options);
 
 				console.log(`Can withdraw. Transaction hash is ${txn.hash}. Claimant PR is ${claimantAsset}`);
 				resolve({ txnHash: txn.hash, issueId, closerData });
