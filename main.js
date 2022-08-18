@@ -29,7 +29,7 @@ const main = async (
 			let issueIsOpen = await contract.bountyIsOpen(issueId);
 
 			// For competition it is flipped - can only claim 
-			if (bountyType == 2) {
+			if (bountyType == 2 || bountyType == 3) {
 				issueIsOpen = !issueIsOpen;
 			}
 
@@ -39,17 +39,17 @@ const main = async (
 				let closerData;
 				const abiCoder = new ethers.utils.AbiCoder;
 
-				if (bountyType == 0 || bountyType == 3) {
+				if (bountyType == 0) {
 					closerData = abiCoder.encode(['address', 'string', 'address', 'string'], [bountyAddress, claimant, payoutAddress, claimantAsset]);
 				} else if (bountyType == 1) {
 					closerData = abiCoder.encode(['address', 'string', 'address', 'string'], [bountyAddress, claimant, payoutAddress, claimantAsset]);
-				} else if (bountyType == 2) {
+				} else if (bountyType == 2 || bountyType == 3) {
 					closerData = abiCoder.encode(['address', 'string', 'address', 'string', 'uint256'], [bountyAddress, claimant, payoutAddress, claimantAsset, tier]);
 				} else {
 					throw new Error('Undefined class of bounty');
 				}
 
-				const txn = await claimManager.claimBounty(issueId, payoutAddress, closerData, options);
+				const txn = await claimManager.claimBounty(bountyAddress, payoutAddress, closerData, options);
 
 				console.log(`Can withdraw. Transaction hash is ${txn.hash}. Claimant PR is ${claimantAsset}`);
 				resolve({ txnHash: txn.hash, issueId, closerData });

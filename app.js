@@ -13,7 +13,7 @@ app.post('/', async (req, res) => {
 	// Construct local signer
 	const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
 	const contract = new ethers.Contract(process.env.OPENQ_PROXY_ADDRESS, OPENQ_ABI, provider);
-	const claimManager = new ethers.Contract(process.env.OPENQ_PROXY_ADDRESS, CLAIM_MANAGER_ABI, provider);
+	const claimManager = new ethers.Contract(process.env.CLAIM_MANAGER_PROXY_ADDRESS, CLAIM_MANAGER_ABI, provider);
 	const wallet = new ethers.Wallet(process.env.ORACLE_PRIVATE_KEY, provider);
 	const contractWithWallet = contract.connect(wallet);
 	const claimManagerWithWallet = claimManager.connect(wallet);

@@ -48,6 +48,8 @@ const MockOpenQContract = {
 		return new Promise(async (resolve, reject) => {
 			if (claimant == 'FlacoJones' && claimantAsset == 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/138') {
 				return resolve(true);
+			} else if (claimant == 'FlacoJones' && claimantAsset == 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/452') {
+				return resolve(ongoingClaimedReturn);
 			} else {
 				return resolve(false);
 			}
