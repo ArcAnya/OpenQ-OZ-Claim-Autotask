@@ -57,7 +57,8 @@ describe('main', () => {
 	const ongoing = 'https://github.com/OpenQDev/OpenQ-TestRepo/issues/451';
 
 	// ALTERNATIVE ISSUE REFERNECE
-	const littleBigIdea = 'https://github.com/honey-labs/honey-frontend/issues/151';
+	const closerWithOddCharacters = 'https://github.com/OpenQDev/OpenQ-TestRepo/issues/517';
+	const closerWithFullIssueUrl = 'https://github.com/OpenQDev/OpenQ-TestRepo/issues/519';
 
 	beforeEach(() => {
 		event = {
@@ -253,7 +254,7 @@ describe('main', () => {
 			});
 
 			it('should resolve with issueId and txnHash for properly referenced issue - pull request body, no edits, with new line', async () => {
-				const obj = { request: { body: { issueUrl: littleBigIdea } } };
+				const obj = { request: { body: { issueUrl: closerWithOddCharacters } } };
 				event = _.merge(event, obj);
 
 				const MockClaimManager = require('../__mocks__/MockClaimManager');
@@ -263,9 +264,25 @@ describe('main', () => {
 				const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
 				MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
 
-				const closerData = abiCoder.encode(['address', 'string', 'address', 'string'], ['0x46e09468616365256F11F4544e65cE0C70ee624b', 'FlacoJones', payoutAddress, 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/138']);
+				const closerData = abiCoder.encode(['address', 'string', 'address', 'string'], ['0x46e09468616365256F11F4544e65cE0C70ee624b', 'FlacoJones', payoutAddress, 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/518']);
 
-				await expect(main(event, MockOpenQContract, MockClaimManager)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85GjwA1', closerData, txnHash: '0x123abc' });
+				await expect(main(event, MockOpenQContract, MockClaimManager)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85QO9ai', closerData, txnHash: '0x123abc' });
+			});
+
+			it('should resolve with issueId and txnHash for properly referenced issue - pull request body, no edits, with URL reference', async () => {
+				const obj = { request: { body: { issueUrl: closerWithFullIssueUrl } } };
+				event = _.merge(event, obj);
+
+				const MockClaimManager = require('../__mocks__/MockClaimManager');
+				const MockOpenQContract = require('../__mocks__/MockOpenQContract');
+				MockOpenQContract.isOpen = true;
+				MockOpenQContract.bountyTypeReturn = 0;
+				const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
+				MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
+
+				const closerData = abiCoder.encode(['address', 'string', 'address', 'string'], ['0x46e09468616365256F11F4544e65cE0C70ee624b', 'FlacoJones', payoutAddress, 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/520']);
+
+				await expect(main(event, MockOpenQContract, MockClaimManager)).resolves.toEqual({ issueId: 'I_kwDOGWnnz85QO_Oe', closerData, txnHash: '0x123abc' });
 			});
 
 			it('should resolve with issueId and txnHash for properly referenced issue - pull request body, pre-merge edits', async () => {
