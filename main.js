@@ -22,7 +22,7 @@ const main = async (
 		}
 
 		try {
-			const { canWithdraw, issueId, claimantAsset, claimant, tier } = await checkWithdrawalEligibility(issueUrl, oauthToken, event.secrets.PAT, contract);
+			const { canWithdraw, issueId, claimantAsset, claimant, tier } = await checkWithdrawalEligibility(issueUrl, oauthToken, event.secrets.PAT, contract, payoutAddress);
 
 			const bountyType = await contract.bountyType(issueId);
 			const bountyAddress = await contract.bountyIdToAddress(issueId);

@@ -13,6 +13,13 @@ const MockOpenQContract = {
 	set ongoingClaimedReturn(bool) {
 		ongoingClaimedReturn = bool;
 	},
+	ongoingClaimedMap: {},
+	get ongoingClaimedMap() {
+		return ongoingClaimedMap;
+	},
+	set ongoingClaimedMap(claimMap) {
+		ongoingClaimedMap = claimMap;
+	},
 	tierClaimedReturn: false,
 	get tierClaimedReturn() {
 		return tierClaimedReturn;
@@ -46,13 +53,7 @@ const MockOpenQContract = {
 	},
 	ongoingClaimed: async (issueId, claimant, claimantAsset) => {
 		return new Promise(async (resolve, reject) => {
-			if (claimant == 'FlacoJones' && claimantAsset == 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/138') {
-				return resolve(true);
-			} else if (claimant == 'FlacoJones' && claimantAsset == 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/452') {
-				return resolve(ongoingClaimedReturn);
-			} else {
-				return resolve(false);
-			}
+			return resolve(ongoingClaimedMap[claimantAsset]);
 		});
 	},
 	tierClaimed: async (issueId, tier) => {

@@ -10,6 +10,7 @@ const MockAdapter = require('axios-mock-adapter');
 describe('checkWithdrawalEligibility', () => {
 	let issueUrl = 'https://github.com/OpenQDev/OpenQ-TestRepo/issues/42';
 	let oauthToken = 'oAuthToken';
+	let payoutAddress = '0x';
 	let pat = 'pat';
 	let mock;
 	const viewerData = {
@@ -32,7 +33,7 @@ describe('checkWithdrawalEligibility', () => {
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 
 			// ACT/ASSERT
-			await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract)).rejects.toEqual(ISSUE_DOES_NOT_EXIST({ issueUrl }));
+			await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract, payoutAddress)).rejects.toEqual(ISSUE_DOES_NOT_EXIST({ issueUrl }));
 		});
 
 		it('should reject with GITHUB_OAUTH_TOKEN_LACKS_PRIVILEGES error if GitHub returns a 401', async () => {
@@ -42,7 +43,7 @@ describe('checkWithdrawalEligibility', () => {
 			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 
 			// ACT/ASSERT
-			await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract)).rejects.toEqual(GITHUB_OAUTH_TOKEN_LACKS_PRIVILEGES({ issueUrl }));
+			await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract, payoutAddress)).rejects.toEqual(GITHUB_OAUTH_TOKEN_LACKS_PRIVILEGES({ issueUrl }));
 		});
 	});
 
@@ -61,7 +62,7 @@ describe('checkWithdrawalEligibility', () => {
 				const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 
 				// ACT/ASSERT
-				await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract)).rejects.toEqual({ canWithdraw: false, errorMessage: 'No pull requests reference this issue.', issueId: 'I_kwDOGWnnz85GZu4Y', type: 'NO_PULL_REQUESTS_REFERENCE_ISSUE' });
+				await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract, payoutAddress)).rejects.toEqual({ canWithdraw: false, errorMessage: 'No pull requests reference this issue.', issueId: 'I_kwDOGWnnz85GZu4Y', type: 'NO_PULL_REQUESTS_REFERENCE_ISSUE' });
 			});
 
 			it('should resolve with NO_WITHDRAWABLE_PR_FOUND if Pull Request references but is NOT MERGED', async () => {
@@ -77,7 +78,7 @@ describe('checkWithdrawalEligibility', () => {
 				const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 
 				// ACT/ASSERT
-				await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract)).rejects.toEqual({ canWithdraw: false, errorMessage: 'No withdrawable PR found.  In order for a pull request to unlock a claim, it must mention the associated bountied issue, be authored by you and merged by a maintainer. We found the following linked pull requests that do not meet the above criteria: https://github.com/OpenQDev/OpenQ-TestRepo/pull/140', issueId: 'I_kwDOGWnnz85GkCSK', type: 'NO_WITHDRAWABLE_PR_FOUND' });
+				await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract, payoutAddress)).rejects.toEqual({ canWithdraw: false, errorMessage: 'No withdrawable PR found.  In order for a pull request to unlock a claim, it must mention the associated bountied issue, be authored by you and merged by a maintainer. We found the following linked pull requests that do not meet the above criteria: https://github.com/OpenQDev/OpenQ-TestRepo/pull/140', issueId: 'I_kwDOGWnnz85GkCSK', type: 'NO_WITHDRAWABLE_PR_FOUND' });
 			});
 
 			it('should resolve with NO_WITHDRAWABLE_PR_FOUND if Pull Request is referenced and merged, but NOT AUTHORED BY VIEWER', async () => {
@@ -93,7 +94,7 @@ describe('checkWithdrawalEligibility', () => {
 				const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 
 				// ACT/ASSERT
-				await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract)).rejects.toEqual({ canWithdraw: false, errorMessage: 'No withdrawable PR found.  In order for a pull request to unlock a claim, it must mention the associated bountied issue, be authored by you and merged by a maintainer. We found the following linked pull requests that do not meet the above criteria: https://github.com/OpenQDev/OpenQ-TestRepo/pull/140', issueId: 'I_kwDOGWnnz85GkCSK', type: 'NO_WITHDRAWABLE_PR_FOUND' });
+				await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract, payoutAddress)).rejects.toEqual({ canWithdraw: false, errorMessage: 'No withdrawable PR found.  In order for a pull request to unlock a claim, it must mention the associated bountied issue, be authored by you and merged by a maintainer. We found the following linked pull requests that do not meet the above criteria: https://github.com/OpenQDev/OpenQ-TestRepo/pull/140', issueId: 'I_kwDOGWnnz85GkCSK', type: 'NO_WITHDRAWABLE_PR_FOUND' });
 			});
 
 			it('should resolve with NO_WITHDRAWABLE_PR_FOUND if Pull Request is referenced and merged, but CLOSER COMMENT NOT PRESENT AT MERGE TIME', async () => {
@@ -107,7 +108,7 @@ describe('checkWithdrawalEligibility', () => {
 
 				const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 
-				await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract)).rejects.toEqual({ canWithdraw: false, errorMessage: 'No withdrawable PR found.  In order for a pull request to unlock a claim, it must mention the associated bountied issue, be authored by you and merged by a maintainer. We found the following linked pull requests that do not meet the above criteria: https://github.com/OpenQDev/OpenQ-TestRepo/pull/140', issueId: 'I_kwDOGWnnz85GkCSK', type: 'NO_WITHDRAWABLE_PR_FOUND' });
+				await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract, payoutAddress)).rejects.toEqual({ canWithdraw: false, errorMessage: 'No withdrawable PR found.  In order for a pull request to unlock a claim, it must mention the associated bountied issue, be authored by you and merged by a maintainer. We found the following linked pull requests that do not meet the above criteria: https://github.com/OpenQDev/OpenQ-TestRepo/pull/140', issueId: 'I_kwDOGWnnz85GkCSK', type: 'NO_WITHDRAWABLE_PR_FOUND' });
 			});
 		});
 
@@ -126,7 +127,7 @@ describe('checkWithdrawalEligibility', () => {
 				MockOpenQContract.bountyTypeReturn = 0;
 
 				// ACT/ASSERT
-				await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract)).resolves.toEqual({ 'canWithdraw': true, type: 'SUCCESS', claimantAsset: 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/138', claimant: 'FlacoJones', issueId: 'I_kwDOGWnnz85GjwA1', errorMessage: null, tier: null });
+				await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract, payoutAddress)).resolves.toEqual({ 'canWithdraw': true, type: 'SUCCESS', claimantAsset: 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/138', claimant: 'FlacoJones', issueId: 'I_kwDOGWnnz85GjwA1', errorMessage: null, tier: null });
 			});
 
 			it('should resolve to with canWithdraw: true if eligible pull request is connected in COMMENTS', async () => {
@@ -143,7 +144,7 @@ describe('checkWithdrawalEligibility', () => {
 				MockOpenQContract.bountyTypeReturn = 0;
 
 				// ACT/ASSERT
-				await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract)).resolves.toEqual({ 'canWithdraw': true, type: 'SUCCESS', claimantAsset: 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/138', claimant: 'FlacoJones', issueId: 'I_kwDOGWnnz85GjwA1', errorMessage: null, tier: null });
+				await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract, payoutAddress)).resolves.toEqual({ 'canWithdraw': true, type: 'SUCCESS', claimantAsset: 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/138', claimant: 'FlacoJones', issueId: 'I_kwDOGWnnz85GjwA1', errorMessage: null, tier: null });
 			});
 
 			describe('ONGOING', () => {
@@ -169,10 +170,11 @@ describe('checkWithdrawalEligibility', () => {
 						.replyOnce(200, viewerData);
 
 					const MockOpenQContract = require('../__mocks__/MockOpenQContract');
+					MockOpenQContract.ongoingClaimedMap = { 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/138': true };
 					MockOpenQContract.bountyTypeReturn = 1;
 
 					// ACT/ASSERT
-					await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract)).resolves.toEqual({ 'canWithdraw': true, type: 'SUCCESS', claimantAsset: 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/139', claimant: 'FlacoJones', issueId: 'I_kwDOGWnnz85GjwA1', errorMessage: null, tier: null });
+					await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract, payoutAddress)).resolves.toEqual({ 'canWithdraw': true, type: 'SUCCESS', claimantAsset: 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/139', claimant: 'FlacoJones', issueId: 'I_kwDOGWnnz85GjwA1', errorMessage: null, tier: null });
 				});
 			});
 
@@ -203,7 +205,7 @@ describe('checkWithdrawalEligibility', () => {
 					MockOpenQContract.tierClaimedReturn = false;
 
 					// ACT/ASSERT
-					await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract)).resolves.toEqual({ 'canWithdraw': true, type: 'SUCCESS', claimantAsset: 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/139', claimant: 'FlacoJones', issueId: 'I_kwDOGWnnz85GjwA1', errorMessage: null, tier: 1 });
+					await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract, payoutAddress)).resolves.toEqual({ 'canWithdraw': true, type: 'SUCCESS', claimantAsset: 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/139', claimant: 'FlacoJones', issueId: 'I_kwDOGWnnz85GjwA1', errorMessage: null, tier: 1 });
 				});
 			});
 		});

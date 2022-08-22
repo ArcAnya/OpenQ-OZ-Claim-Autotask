@@ -163,14 +163,15 @@ describe('main', () => {
 			});
 
 			describe('ONGOING', () => {
-				it.only('should fail if claimant id is claimed - Ongoing', async () => {
+				it('should fail if claimant id is claimed - Ongoing', async () => {
 					const obj = { request: { body: { issueUrl: ongoing } } };
 					event = _.merge(event, obj);
 
+					const linkedPullRequest = 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/452';
 					const MockClaimManager = require('../__mocks__/MockClaimManager');
 					const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 					MockOpenQContract.isOpen = true;
-					MockOpenQContract.ongoingClaimedReturn = true;
+					MockOpenQContract.ongoingClaimedMap = { [linkedPullRequest]: true };
 					MockOpenQContract.bountyTypeReturn = 1;
 					const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
 					MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
@@ -242,7 +243,7 @@ describe('main', () => {
 				const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 				MockOpenQContract.isOpen = true;
 				MockOpenQContract.bountyTypeReturn = 1;
-				MockOpenQContract.ongoingClaimedReturn = false;
+				MockOpenQContract.ongoingClaimedMap = { 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/452': false };
 				const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
 				MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
 
