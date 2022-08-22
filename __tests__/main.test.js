@@ -2,6 +2,8 @@ const dotenv = require('dotenv');
 const ethers = require('ethers');
 const _ = require('lodash');
 const main = require('../main');
+const MockClaimManager = require('../__mocks__/MockClaimManager');
+const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 dotenv.config();
 
 /* 
@@ -25,8 +27,6 @@ describe('main', () => {
 	let apiKey = 'mockApiKey';
 	let apiSecret = 'mockApiSecret';
 	const abiCoder = new ethers.utils.AbiCoder;
-
-	// Test Issues
 
 	// BODY REFERENCES
 	const issueReferencedAndMergedByFlacoJones = 'https://github.com/OpenQDev/OpenQ-TestRepo/issues/136';
@@ -79,6 +79,8 @@ describe('main', () => {
 			apiKey,
 			apiSecret,
 		};
+
+		MockOpenQContract.reset();
 	});
 
 	describe('INELEGIBLE', () => {
@@ -88,8 +90,6 @@ describe('main', () => {
 					const obj = { request: { body: { issueUrl: referencedButNotMerged } } };
 					event = _.merge(event, obj);
 
-					const MockClaimManager = require('../__mocks__/MockClaimManager');
-					const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 					MockOpenQContract.isOpen = true;
 					MockOpenQContract.bountyTypeReturn = {};
 
@@ -102,10 +102,6 @@ describe('main', () => {
 					const obj = { request: { body: { issueUrl: bodyPostMergeEdits } } };
 					event = _.merge(event, obj);
 
-					const MockClaimManager = require('../__mocks__/MockClaimManager');
-					const MockOpenQContract = require('../__mocks__/MockOpenQContract');
-					MockOpenQContract.isOpen = true;
-
 					await expect(main(event, MockOpenQContract, MockClaimManager)).rejects.toEqual({ canWithdraw: false, errorMessage: 'No withdrawable PR found.  In order for a pull request to unlock a claim, it must mention the associated bountied issue, be authored by you and merged by a maintainer. We found the following linked pull requests that do not meet the above criteria: https://github.com/OpenQDev/OpenQ-TestRepo/pull/183', issueId: 'I_kwDOGWnnz85IbvFe', type: 'NO_WITHDRAWABLE_PR_FOUND' });
 				});
 			});
@@ -115,8 +111,6 @@ describe('main', () => {
 					const obj = { request: { body: { issueUrl: commentPostMergeEdits } } };
 					event = _.merge(event, obj);
 
-					const MockClaimManager = require('../__mocks__/MockClaimManager');
-					const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 					MockOpenQContract.isOpen = true;
 
 					await expect(main(event, MockOpenQContract, MockClaimManager)).rejects.toEqual({ canWithdraw: false, errorMessage: 'No withdrawable PR found.  In order for a pull request to unlock a claim, it must mention the associated bountied issue, be authored by you and merged by a maintainer. We found the following linked pull requests that do not meet the above criteria: https://github.com/OpenQDev/OpenQ-TestRepo/pull/185', issueId: 'I_kwDOGWnnz85Ibvoq', type: 'NO_WITHDRAWABLE_PR_FOUND' });
@@ -128,8 +122,7 @@ describe('main', () => {
 					const obj = { request: { body: { issueUrl: noPullRequestReferences } } };
 					event = _.merge(event, obj);
 
-					const MockClaimManager = require('../__mocks__/MockClaimManager');
-					const MockOpenQContract = require('../__mocks__/MockOpenQContract');
+
 					MockOpenQContract.isOpen = true;
 
 					await expect(main(event, MockOpenQContract, MockClaimManager)).rejects.toEqual({ canWithdraw: false, errorMessage: 'No pull requests reference this issue.', issueId: 'I_kwDOGWnnz85Iaa3I', type: 'NO_PULL_REQUESTS_REFERENCE_ISSUE' });
@@ -139,8 +132,7 @@ describe('main', () => {
 					const obj = { request: { body: { issueUrl: relatedToPullRequestReference } } };
 					event = _.merge(event, obj);
 
-					const MockClaimManager = require('../__mocks__/MockClaimManager');
-					const MockOpenQContract = require('../__mocks__/MockOpenQContract');
+
 					MockOpenQContract.isOpen = true;
 
 					await expect(main(event, MockOpenQContract, MockClaimManager)).rejects.toEqual({ canWithdraw: false, errorMessage: 'No withdrawable PR found.  In order for a pull request to unlock a claim, it must mention the associated bountied issue, be authored by you and merged by a maintainer. We found the following linked pull requests that do not meet the above criteria: https://github.com/OpenQDev/OpenQ-TestRepo/pull/198', issueId: 'I_kwDOGWnnz85Ibz0R', type: 'NO_WITHDRAWABLE_PR_FOUND' });
@@ -152,8 +144,7 @@ describe('main', () => {
 			describe('SINGLE', () => {
 				it('should reject if bounty is closed', async () => {
 
-					const MockClaimManager = require('../__mocks__/MockClaimManager');
-					const MockOpenQContract = require('../__mocks__/MockOpenQContract');
+
 					MockOpenQContract.isOpen = false;
 					MockOpenQContract.bountyTypeReturn = 0;
 					const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
@@ -169,8 +160,7 @@ describe('main', () => {
 					event = _.merge(event, obj);
 
 					const linkedPullRequest = 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/452';
-					const MockClaimManager = require('../__mocks__/MockClaimManager');
-					const MockOpenQContract = require('../__mocks__/MockOpenQContract');
+
 					MockOpenQContract.isOpen = true;
 					MockOpenQContract.ongoingClaimedMap = { [linkedPullRequest]: true };
 					MockOpenQContract.bountyTypeReturn = 1;
@@ -186,8 +176,6 @@ describe('main', () => {
 					const obj = { request: { body: { issueUrl: referencedTier1Winner } } };
 					event = _.merge(event, obj);
 
-					const MockClaimManager = require('../__mocks__/MockClaimManager');
-					const MockOpenQContract = require('../__mocks__/MockOpenQContract');
 					MockOpenQContract.isOpen = true;
 					MockOpenQContract.bountyTypeReturn = 2;
 					MockOpenQContract.tierClaimedReturn = true;

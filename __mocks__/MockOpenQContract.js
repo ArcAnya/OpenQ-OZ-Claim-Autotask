@@ -74,6 +74,14 @@ const MockOpenQContract = {
 		return new Promise(async (resolve, reject) => {
 			resolve({ hash });
 		});
+	},
+	reset: () => {
+		isOpen = true;
+		ongoingClaimedReturn = false;
+		ongoingClaimedMap = {};
+		tierClaimedReturn = false;
+		bountyTypeReturn = 0;
+		bountyIdToAddressReturn = '0x46e09468616365256F11F4544e65cE0C70ee624b';
 	}
 };
 
