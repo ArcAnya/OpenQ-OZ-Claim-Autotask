@@ -251,6 +251,7 @@ describe('main', () => {
 				MockOpenQContract.ongoingClaimedMap = { 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/452': false };
 				const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
 				MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
+				MockOpenQContract.isSolvent = true;
 
 				const closerData = abiCoder.encode(['address', 'string', 'address', 'string'], ['0x46e09468616365256F11F4544e65cE0C70ee624b', 'FlacoJones', payoutAddress, 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/452']);
 
