@@ -169,6 +169,22 @@ describe('main', () => {
 
 					await expect(main(event, MockOpenQContract, MockClaimManager)).rejects.toEqual({ canWithdraw: false, errorMessage: 'Ongoing Bounty for https://github.com/OpenQDev/OpenQ-TestRepo/issues/451 has already been claimed by FlacoJones for https://github.com/OpenQDev/OpenQ-TestRepo/pull/452.', id: '0x1abc0D6fb0d5A374027ce98Bf15716A3Ee31e580', type: 'BOUNTY_IS_CLAIMED' });
 				});
+
+				it('should fail if ongoing contract is insolvent', async () => {
+					const obj = { request: { body: { issueUrl: ongoing } } };
+					event = _.merge(event, obj);
+
+					const linkedPullRequest = 'https://github.com/OpenQDev/OpenQ-TestRepo/pull/452';
+
+					MockOpenQContract.isOpen = true;
+					MockOpenQContract.ongoingClaimedMap = { [linkedPullRequest]: false };
+					MockOpenQContract.bountyTypeReturn = 1;
+					const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
+					MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
+					MockOpenQContract.isSolvent = false;
+
+					await expect(main(event, MockOpenQContract, MockClaimManager)).rejects.toEqual({ canWithdraw: false, errorMessage: 'Ongoing Bounty for https://github.com/OpenQDev/OpenQ-TestRepo/issues/451 has insufficient funds to payout this eligible withdrawl. Please contact the organization maintainer.', id: '0x1abc0D6fb0d5A374027ce98Bf15716A3Ee31e580', type: 'BOUNTY_IS_INSOLVENT' });
+				});
 			});
 
 			describe('TIERED', () => {

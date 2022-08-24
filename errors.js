@@ -42,6 +42,10 @@ const ONGOING_ALREADY_CLAIMED = ({ issueUrl, payoutAddress, claimant, claimantAs
 	return { canWithdraw: false, id: payoutAddress, type: 'BOUNTY_IS_CLAIMED', errorMessage: `Ongoing Bounty for ${issueUrl} has already been claimed by ${claimant} for ${claimantAsset}.` };
 };
 
+const BOUNTY_IS_INSOLVENT = ({ issueUrl, payoutAddress }) => {
+	return { canWithdraw: false, id: payoutAddress, type: 'BOUNTY_IS_INSOLVENT', errorMessage: `Ongoing Bounty for ${issueUrl} has insufficient funds to payout this eligible withdrawl. Please contact the organization maintainer.` };
+};
+
 const TIER_ALREADY_CLAIMED = ({ issueUrl, payoutAddress, claimant, claimantAsset, tier }) => {
 	return { canWithdraw: false, id: payoutAddress, type: 'BOUNTY_IS_CLAIMED', errorMessage: `Tiered Bounty for ${issueUrl} at tier ${tier + 1} has already been claimed by ${claimant} for ${claimantAsset}.` };
 };
@@ -81,5 +85,6 @@ module.exports = {
 	NO_WITHDRAWABLE_PR_FOUND,
 	UNKNOWN_ERROR,
 	ONGOING_ALREADY_CLAIMED,
-	TIER_ALREADY_CLAIMED
+	TIER_ALREADY_CLAIMED,
+	BOUNTY_IS_INSOLVENT
 };

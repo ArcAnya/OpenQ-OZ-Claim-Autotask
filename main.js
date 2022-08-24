@@ -1,6 +1,6 @@
 const checkWithdrawalEligibilityImpl = require('./lib/checkWithdrawalEligibility');
 const validateSignedOauthTokenImpl = require('./lib/validateSignedOauthToken');
-const { BOUNTY_IS_CLAIMED } = require('./errors');
+const { BOUNTY_IS_CLAIMED, BOUNTY_IS_INSOLVENT } = require('./errors');
 const ethers = require('ethers');
 
 const main = async (
@@ -31,6 +31,14 @@ const main = async (
 			// For competition it is flipped - can only claim 
 			if (bountyType == 2 || bountyType == 3) {
 				issueIsOpen = !issueIsOpen;
+			}
+
+			if (bountyType == 1) {
+				console.log(contract);
+				let solvent = await contract.solvent(issueId);
+				if (!solvent) {
+					reject(BOUNTY_IS_INSOLVENT({ issueUrl, payoutAddress }));
+				}
 			}
 
 			if (canWithdraw && issueIsOpen) {

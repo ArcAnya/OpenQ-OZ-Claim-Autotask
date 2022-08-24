@@ -6,6 +6,13 @@ const MockOpenQContract = {
 	set isOpen(bool) {
 		isOpen = bool;
 	},
+	isSolvent: true,
+	get isSolvent() {
+		return isSolvent;
+	},
+	set isSolvent(bool) {
+		isSolvent = bool;
+	},
 	ongoingClaimedReturn: false,
 	get ongoingClaimedReturn() {
 		return ongoingClaimedReturn;
@@ -44,6 +51,11 @@ const MockOpenQContract = {
 	bountyIsOpen: async (issueId) => {
 		return new Promise(async (resolve, reject) => {
 			resolve(isOpen);
+		});
+	},
+	solvent: async (issueId) => {
+		return new Promise(async (resolve, reject) => {
+			resolve(isSolvent);
 		});
 	},
 	bountyType: async (issueId) => {
