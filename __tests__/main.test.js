@@ -198,7 +198,7 @@ describe('main', () => {
 					const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
 					MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
 
-					await expect(main(event, MockOpenQContract, MockClaimManager)).rejects.toEqual({ type: 'NO_WITHDRAWABLE_PR_FOUND', issueId: 'I_kwDOGWnnz85Oi4wi', errorMessage: 'No withdrawable PR found.  In order for a pull request to unlock a claim, it must mention the associated bountied issue, be authored by you and merged by a maintainer. We found the following linked pull requests that do not meet the above criteria: https://github.com/OpenQDev/OpenQ-TestRepo/pull/450', canWithdraw: false });
+					await expect(main(event, MockOpenQContract, MockClaimManager)).rejects.toEqual({ type: 'TIER_IS_CLAIMED', id: '0x1abc0D6fb0d5A374027ce98Bf15716A3Ee31e580', errorMessage: 'Tiered Bounty for https://github.com/OpenQDev/OpenQ-TestRepo/issues/449 at tier 1 has already been claimed by FlacoJones for https://github.com/OpenQDev/OpenQ-TestRepo/pull/450.', canWithdraw: false });
 				});
 			});
 		});

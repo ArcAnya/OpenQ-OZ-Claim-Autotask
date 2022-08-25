@@ -47,7 +47,7 @@ const BOUNTY_IS_INSOLVENT = ({ issueUrl, payoutAddress }) => {
 };
 
 const TIER_ALREADY_CLAIMED = ({ issueUrl, payoutAddress, claimant, claimantAsset, tier }) => {
-	return { canWithdraw: false, id: payoutAddress, type: 'BOUNTY_IS_CLAIMED', errorMessage: `Tiered Bounty for ${issueUrl} at tier ${tier + 1} has already been claimed by ${claimant} for ${claimantAsset}.` };
+	return { canWithdraw: false, id: payoutAddress, type: 'TIER_IS_CLAIMED', errorMessage: `Tiered Bounty for ${issueUrl} at tier ${tier} has already been claimed by ${claimant} for ${claimantAsset}.` };
 };
 
 const UNKNOWN_ERROR = ({ issueUrl, error }) => {
