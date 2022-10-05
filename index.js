@@ -2,17 +2,19 @@
 const main = require('./main');
 const OPENQ_ABI = require('./OpenQABI.json');
 const CLAIM_MANAGER_ABI = require('./ClaimManagerABI.json');
+const STAGING_AUTOTASK_ID = 'e448c2ca-24b4-453b-8a44-069badc1bcf2';
+const PRODUCTION_AUTOTASK_ID = '1224e6b1-20f6-4f55-96b1-f9cf0683ebc8';
 
 // Autotask Entrypoint - constructs signer and contract using Relay
 exports.handler = async (event) => {
 	let OPENQ_PROXY_ADDRESS;
 	let CLAIM_MANAGER_PROXY_ADDRESS;
 	switch (event.autotaskId) {
-		case 'e448c2ca-24b4-453b-8a44-069badc1bcf2':
+		case STAGING_AUTOTASK_ID:
 			OPENQ_PROXY_ADDRESS = event.secrets.OPENQ_PROXY_ADDRESS_STAGING;
 			CLAIM_MANAGER_PROXY_ADDRESS = event.secrets.CLAIM_MANAGER_PROXY_ADDRESS_STAGING;
 			break;
-		case '1224e6b1-20f6-4f55-96b1-f9cf0683ebc8':
+		case PRODUCTION_AUTOTASK_ID:
 			OPENQ_PROXY_ADDRESS = event.secrets.OPENQ_PROXY_ADDRESS_PRODUCTION;
 			CLAIM_MANAGER_PROXY_ADDRESS = event.secrets.CLAIM_MANAGER_PROXY_ADDRESS_PRODUCTION;
 			break;

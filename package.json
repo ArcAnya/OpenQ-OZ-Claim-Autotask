@@ -8,7 +8,7 @@
 		"test": "jest",
 		"test:int": "jest -t 'main'",
 		"test:withdraw": "jest -t 'checkWithdrawalEligibility'",
-		"push:staging": "defender-autotask update-code e448c2ca-24b4-453b-8a44-069badc1bcf2 .",
+		"push:staging": "defender-autotask update-code 27766ed2-4997-42b7-bfd5-43dfe20acb2c .",
 		"push:production": "defender-autotask update-code 1224e6b1-20f6-4f55-96b1-f9cf0683ebc8 ."
 	},
 	"keywords": [],
