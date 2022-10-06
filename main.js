@@ -34,7 +34,6 @@ const main = async (
 			}
 
 			if (bountyType == 1) {
-				console.log(contract);
 				let solvent = await contract.solvent(issueId);
 				if (!solvent) {
 					reject(BOUNTY_IS_INSOLVENT({ issueUrl, payoutAddress }));
