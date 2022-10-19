@@ -28,9 +28,9 @@ const main = async (
 			const bountyAddress = await contract.bountyIdToAddress(issueId);
 			let issueIsOpen = await contract.bountyIsOpen(issueId);
 
-			// For competition it is flipped - can only claim 
+			// For competition: should be able to claim both when open AND when closed
 			if (bountyType == 2 || bountyType == 3) {
-				issueIsOpen = !issueIsOpen;
+				issueIsOpen = true;
 			}
 
 			if (bountyType == 1) {
