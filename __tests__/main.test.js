@@ -150,7 +150,7 @@ describe('main', () => {
 					const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
 					MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
 
-					await expect(main(event, MockOpenQContract, MockClaimManager)).rejects.toEqual({ type: 'BOUNTY_IS_CLAIMED', id: '0x1abc0D6fb0d5A374027ce98Bf15716A3Ee31e580', errorMessage: 'Bounty for https://github.com/OpenQDev/OpenQ-TestRepo/issues/136 is already claimed', canWithdraw: false });
+					await expect(main(event, MockOpenQContract, MockClaimManager)).rejects.toEqual({ type: 'BOUNTY_IS_CLAIMED', id: '0x1abc0D6fb0d5A374027ce98Bf15716A3Ee31e580', errorMessage: 'Contract for https://github.com/OpenQDev/OpenQ-TestRepo/issues/136 is already claimed', canWithdraw: false });
 				});
 			});
 
@@ -198,7 +198,7 @@ describe('main', () => {
 					const bountyAddress = '0x46e09468616365256F11F4544e65cE0C70ee624b';
 					MockOpenQContract.bountyIdToAddressReturn = bountyAddress;
 
-					await expect(main(event, MockOpenQContract, MockClaimManager)).rejects.toEqual({ type: 'TIER_IS_CLAIMED', id: '0x1abc0D6fb0d5A374027ce98Bf15716A3Ee31e580', errorMessage: 'Tiered Bounty for https://github.com/OpenQDev/OpenQ-TestRepo/issues/449 at tier 1 has already been claimed by FlacoJones for https://github.com/OpenQDev/OpenQ-TestRepo/pull/450.', canWithdraw: false });
+					await expect(main(event, MockOpenQContract, MockClaimManager)).rejects.toEqual({ type: 'TIER_IS_CLAIMED', id: '0x1abc0D6fb0d5A374027ce98Bf15716A3Ee31e580', errorMessage: 'Contest contract for https://github.com/OpenQDev/OpenQ-TestRepo/issues/449 at tier 1 has already been claimed by FlacoJones for https://github.com/OpenQDev/OpenQ-TestRepo/pull/450.', canWithdraw: false });
 				});
 			});
 		});

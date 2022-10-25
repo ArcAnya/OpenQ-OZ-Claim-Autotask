@@ -11,7 +11,7 @@ const GITHUB_OAUTH_TOKEN_LACKS_PRIVILEGES = ({ issueId }) => {
 };
 
 const PR_NOT_MERGED = ({ issueId }) => {
-	return { issueId, canWithdraw: false, type: 'PR_NOT_MERGED', errorMessage: 'The PR associated to this bounty is not yet merged.' };
+	return { issueId, canWithdraw: false, type: 'PR_NOT_MERGED', errorMessage: 'The PR associated to this contract is not yet merged.' };
 };
 
 const ISSUE_DOES_NOT_EXIST = ({ issueUrl }) => {
@@ -35,19 +35,19 @@ const PR_NOT_MERGED_INTO_ORGANIZATION_REPOSITORY = ({ issueId }) => {
 };
 
 const BOUNTY_IS_CLAIMED = ({ issueUrl, payoutAddress }) => {
-	return { canWithdraw: false, id: payoutAddress, type: 'BOUNTY_IS_CLAIMED', errorMessage: `Bounty for ${issueUrl} is already claimed` };
+	return { canWithdraw: false, id: payoutAddress, type: 'BOUNTY_IS_CLAIMED', errorMessage: `Contract for ${issueUrl} is already claimed` };
 };
 
 const ONGOING_ALREADY_CLAIMED = ({ issueUrl, payoutAddress, claimant, claimantAsset }) => {
-	return { canWithdraw: false, id: payoutAddress, type: 'BOUNTY_IS_CLAIMED', errorMessage: `Ongoing Bounty for ${issueUrl} has already been claimed by ${claimant} for ${claimantAsset}.` };
+	return { canWithdraw: false, id: payoutAddress, type: 'BOUNTY_IS_CLAIMED', errorMessage: `Split-price contract for ${issueUrl} has already been claimed by ${claimant} for ${claimantAsset}.` };
 };
 
 const BOUNTY_IS_INSOLVENT = ({ issueUrl, payoutAddress }) => {
-	return { canWithdraw: false, id: payoutAddress, type: 'BOUNTY_IS_INSOLVENT', errorMessage: `Ongoing Bounty for ${issueUrl} has insufficient funds to payout this eligible withdrawl. Please contact the organization maintainer.` };
+	return { canWithdraw: false, id: payoutAddress, type: 'BOUNTY_IS_INSOLVENT', errorMessage: `Split-price contract for ${issueUrl} has insufficient funds to payout this eligible withdrawl. Please contact the organization maintainer.` };
 };
 
 const TIER_ALREADY_CLAIMED = ({ issueUrl, payoutAddress, claimant, claimantAsset, tier }) => {
-	return { canWithdraw: false, id: payoutAddress, type: 'TIER_IS_CLAIMED', errorMessage: `Tiered Bounty for ${issueUrl} at tier ${tier} has already been claimed by ${claimant} for ${claimantAsset}.` };
+	return { canWithdraw: false, id: payoutAddress, type: 'TIER_IS_CLAIMED', errorMessage: `Contest contract for ${issueUrl} at tier ${tier} has already been claimed by ${claimant} for ${claimantAsset}.` };
 };
 
 const UNKNOWN_ERROR = ({ issueUrl, error }) => {
