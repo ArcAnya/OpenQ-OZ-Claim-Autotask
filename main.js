@@ -30,7 +30,7 @@ const main = async (
 
 			// For competition it is flipped - can only claim 
 			if (bountyType == 2 || bountyType == 3) {
-				issueIsOpen = !issueIsOpen;
+				issueIsOpen = true;
 			}
 
 			if (bountyType == 1) {
