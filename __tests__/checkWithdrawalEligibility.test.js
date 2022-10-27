@@ -1,7 +1,9 @@
 const checkWithdrawalEligibility = require('../lib/checkWithdrawalEligibility');
 const {
 	ISSUE_DOES_NOT_EXIST,
-	GITHUB_OAUTH_TOKEN_LACKS_PRIVILEGES
+	GITHUB_OAUTH_TOKEN_LACKS_PRIVILEGES,
+	RATE_LIMITED,
+	RATE_LIMITED_PAT
 } = require('../errors');
 
 const axios = require('axios');
@@ -34,6 +36,28 @@ describe('checkWithdrawalEligibility', () => {
 
 			// ACT/ASSERT
 			await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract, payoutAddress)).rejects.toEqual(ISSUE_DOES_NOT_EXIST({ issueUrl }));
+		});
+
+		it.only('should reject with RATE_LIMITED_PAT error if result is RATE_LIMITED', async () => {
+			// ARRANGE
+			const data = { errors: [{ type: 'RATE_LIMITED' }] };
+			mock.onPost('https://api.github.com/graphql').reply(200, data);
+			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
+
+			// ACT/ASSERT
+			await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract, payoutAddress)).rejects.toEqual(RATE_LIMITED_PAT({ issueUrl }));
+		});
+
+		it.only('should reject with RATE_LIMITED error if resultViewer is RATE_LIMITED', async () => {
+			// ARRANGE
+			const data = { foo: "hi" };
+			const resultViewerError = { errors: [{ type: 'RATE_LIMITED' }] };
+			mock.onPost('https://api.github.com/graphql').replyOnce(200, data);
+			mock.onPost('https://api.github.com/graphql').replyOnce(200, resultViewerError);
+			const MockOpenQContract = require('../__mocks__/MockOpenQContract');
+
+			// ACT/ASSERT
+			await expect(checkWithdrawalEligibility(issueUrl, oauthToken, pat, MockOpenQContract, payoutAddress)).rejects.toEqual(RATE_LIMITED({ issueUrl }));
 		});
 
 		it('should reject with GITHUB_OAUTH_TOKEN_LACKS_PRIVILEGES error if GitHub returns a 401', async () => {
