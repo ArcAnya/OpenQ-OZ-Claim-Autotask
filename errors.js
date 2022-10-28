@@ -69,6 +69,14 @@ const NO_PULL_REQUESTS_REFERENCE_ISSUE = ({ issueId }) => {
 	return { issueId, canWithdraw: false, type: 'NO_PULL_REQUESTS_REFERENCE_ISSUE', errorMessage: 'No pull requests reference this issue.' };
 };
 
+const RATE_LIMITED = ({ issueUrl }) => {
+	return { issueUrl, canWithdraw: false, type: 'RATE_LIMITED', errorMessage: 'It appears the Github user you are attempting to claim with has been rate limited by the API. Have you been using the API extensively lately? Please attempt claim again in one hour' };
+};
+
+const RATE_LIMITED_PAT = ({ issueUrl }) => {
+	return { issueUrl, canWithdraw: false, type: 'RATE_LIMITED_PAT', errorMessage: 'It appears we are being rate limited by Github...please attempt claim in one hour.' };
+};
+
 module.exports = {
 	INVALID_GITHUB_OAUTH_TOKEN,
 	NO_CLOSER_COMMENT_AT_MERGE_TIME,
@@ -86,5 +94,7 @@ module.exports = {
 	UNKNOWN_ERROR,
 	ONGOING_ALREADY_CLAIMED,
 	TIER_ALREADY_CLAIMED,
-	BOUNTY_IS_INSOLVENT
+	BOUNTY_IS_INSOLVENT,
+	RATE_LIMITED,
+	RATE_LIMITED_PAT
 };
