@@ -45,7 +45,7 @@ To test, you will need:
 OAUTH_TOKEN=
 SIGNED_OAUTH_TOKEN=
 PAT=
-COOKIE_SIGNER="entropydfnjd23"
+COOKIE_SIGNER=entropydfnjd23
 ```
 
 ### Get an OAuth Token Signed with the same COOKIE_SIGNER
